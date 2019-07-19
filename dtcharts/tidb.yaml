@@ -1,0 +1,12 @@
+name: tidb
+sub:
+  - name: tidb-operator
+    source:
+      type: repo
+      location: http://charts.pingcap.org/
+    crd: https://raw.githubusercontent.com/pingcap/tidb-operator/master/manifests/crd.yaml
+  # wait until controller/scheduler ready
+  - name: tidb-cluster
+    source:
+      type: repo
+      location: http://charts.pingcap.org/

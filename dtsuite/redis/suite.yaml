@@ -1,0 +1,6 @@
+name: redis
+chart: redis
+testcase_cls: 'dt.common.suite.impl.bank:BankTestCase'
+testcase_model_cls: 'dtsuite.redis.bank:Bank'
+values:
+  clusterDomain: __CLUSTER_DOMAIN__

@@ -1,0 +1,21 @@
+*.sw[po]
+/tmp
+/venv
+*.egg-info
+.eggs
+/dist
+/build
+/history_records
+
+__pycache__/
+
+local_config.py
+
+# helm chart pkgs
+/*-*.tgz
+# helm chart override values
+/values.yaml
+# subchart pkgs
+contrib/charts/*/charts/*.tgz
+# chart requirements lock
+requirements.lock

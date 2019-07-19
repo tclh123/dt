@@ -1,0 +1,4 @@
+name: redis
+source:
+  type: repo
+  location: http://mirror.azure.cn/kubernetes/charts
