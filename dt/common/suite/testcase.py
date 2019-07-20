@@ -21,10 +21,17 @@ class TestCase(Model):
         self.api = dt_api
         self.model = model_cls(dt_api)
 
-    # main loop
     def run(self, timeout=0):
         self.setUp()
 
+        try:
+            self.main_loop(timeout)
+        except Exception:
+            raise
+        finally:
+            self.tearDown()
+
+    def main_loop(self, timeout):
         if timeout:
             total_ticks = max(timeout // SECS_PER_TICK, 1)
         else:
@@ -57,8 +64,6 @@ class TestCase(Model):
                     break
                 self.init_model()
                 time.sleep(SECS_PER_TICK)
-
-        self.tearDown()
 
     def get_test_funcs(self):
         for attr in dir(self):
@@ -93,7 +98,7 @@ class TestCase(Model):
 
     def tearDown(self):
         # purge chart
-        res = self.api.chart.uninstall(release_name)
+        res = self.api.chart.uninstall(self.api.release_name)
         logger.info('uninstalled chart: %s', self.api.chart.name)
 
         # TODO: clean PVCs, kubectl -ndttt get pvc
