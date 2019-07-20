@@ -61,7 +61,7 @@ dt run redis -t 10 -d
 
 A suite yaml looks like,
 
-```
+```yaml
 name: redis
 chart: redis
 testcase_cls: 'dt.common.suite.impl.bank:BankTestCase'
