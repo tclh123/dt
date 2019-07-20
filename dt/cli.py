@@ -41,11 +41,6 @@ def main(args=None):
     subparsers = parser.add_subparsers(help='Sub commands', dest='subparser', required=True)
 
     run_parser = subparsers.add_parser('run', help='run a test suite')
-
-    # ensure_parser.add_argument('sub_domains', help='Sub domains, comma-separated.')
-    # ensure_parser.add_argument('--type', choices=['A', 'CNAME', 'MX', 'TXT'],
-    #                            required=True,
-    #                            help='DNS record type.')
     run_parser.set_defaults(func=run)
 
     args = parser.parse_args(args)

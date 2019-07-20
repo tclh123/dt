@@ -1,3 +1,4 @@
+import time
 import random
 import logging
 
@@ -5,7 +6,6 @@ from dt.common.mixin.model import Model
 from dt.common.suite.testcase import TestCase
 from dt.common.suite.model import TestCaseModel
 from dt.common.suite.record import Record
-from dt.common.util import gen_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -19,16 +19,24 @@ class BankTestCase(TestCase):
         self.api = dt_api
         self.bank = self.model = model_cls(api=dt_api)
         self.n = BANK_ACCOUNT_NUM
+        self.time_ns = None
 
     def setUp(self):
         super().setUp()
+        self.init_model()
+
+    def init_model(self):
         balances = [INIT_BALANCE for _ in range(self.n)]
         self.bank.init(balances)
+        self.time_ns = time.time_ns()
+
+    def gen_timestamp(self):
+        return time.time_ns() - self.time_ns
 
     def test_read(self):
-        call_time = gen_timestamp()
+        call_time = self.gen_timestamp()
         output = self.bank.read()
-        return_time = gen_timestamp()
+        return_time = self.gen_timestamp()
         return Record(input=BankInput(op=0), call_time=call_time, output=output, return_time=return_time)
 
     def test_transfer(self):
@@ -39,9 +47,9 @@ class BankTestCase(TestCase):
         input_ = BankInput(op=1, from_account=from_account, to_account=to_account, amount=amount)
         logger.info('test_transter %s', input_.to_dict())
 
-        call_time = gen_timestamp()
+        call_time = self.gen_timestamp()
         output = self.bank.transfer(from_account, to_account, amount)
-        return_time = gen_timestamp()
+        return_time = self.gen_timestamp()
 
         return Record(input=input_, call_time=call_time, output=output, return_time=return_time)
 
@@ -62,7 +70,7 @@ class BankInput(Model):
 
 class BankOutput(Model):
     __fields__ = [
-        'balances',  # state
+        'balances',  # output state for read
         'ok',        # operation ok, boolean
         'unknown',   # timeout
     ]
@@ -89,9 +97,9 @@ class Bank(TestCaseModel):
     def transfer(self, from_account, to_account, amount):
 
         if self.balances[from_account] < amount:
-            return BankOutput(balances=self.balances, ok=False)
+            return BankOutput(ok=False)
 
         self.balances[from_account] -= amount
         self.balances[to_account] += amount
 
-        return BankOutput(balances=self.balances, ok=True)
+        return BankOutput(ok=True)

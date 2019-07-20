@@ -16,6 +16,8 @@ NAMESPACE_PREFIX = 'dtesting'
 RANDOM_SUFFIX_LEN = 7
 
 HISTORY_RECORDS_SAVE_PATH = os.path.join(PROJECT_ROOT, 'history_records')
+CHECKER_PATH = os.path.join(PROJECT_ROOT, 'bin')
+DEFAULT_CHECKER_BIN = os.path.join(CHECKER_PATH, 'checker-bank')
 
 
 try:

@@ -50,11 +50,12 @@ class TestCase(Model):
 
                 # record records for analyze
                 # operation records: input, output, call_time, return_time
-                self.api.record(records)
+                self.api.run_checker(self.api.record(records))
 
                 ticks += 1
                 if ticks >= total_ticks:
                     break
+                self.init_model()
                 time.sleep(SECS_PER_TICK)
 
         self.tearDown()
@@ -86,6 +87,9 @@ class TestCase(Model):
         res = self.api.chart.install(self.api.namespace, name=self.api.release_name,
                                      values=self.api.values, wait=True)
         logger.info('installed chart: %s', self.api.chart.name)
+
+    def init_model(self):
+        pass
 
     def tearDown(self):
         # purge chart
