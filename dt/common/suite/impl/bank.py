@@ -23,9 +23,9 @@ class BankTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.init_model()
 
     def init_model(self):
+        '''init_model will be called at each tick beginning'''
         balances = [INIT_BALANCE for _ in range(self.n)]
         self.bank.init(balances)
         self.time_ns = time.time_ns()
@@ -42,6 +42,8 @@ class BankTestCase(TestCase):
     def test_transfer(self):
         from_account = random.randint(0, self.n-1)
         to_account = random.randint(0, self.n-1)
+        if to_account == from_account:
+            to_account = (to_account + 1) % self.n
         amount = random.randint(1, MAX_TRANSFER_AMOUNT)
 
         input_ = BankInput(op=1, from_account=from_account, to_account=to_account, amount=amount)

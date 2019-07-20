@@ -23,7 +23,7 @@ def run(args):
 
     suite = Suite.from_yaml(Suite.load_yaml('redis/suite'))
     print(suite)
-    suite.run()
+    suite.run(timeout=args.timeout)
 
 
 def main(args=None):
@@ -41,6 +41,7 @@ def main(args=None):
     subparsers = parser.add_subparsers(help='Sub commands', dest='subparser', required=True)
 
     run_parser = subparsers.add_parser('run', help='run a test suite')
+    run_parser.add_argument('-t', '--timeout', help='run timeout, default is 0 means infinite', default=0, type=int)
     run_parser.set_defaults(func=run)
 
     args = parser.parse_args(args)

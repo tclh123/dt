@@ -37,6 +37,7 @@ class Suite(Model, YamlMixin):
         testcase = testcase_cls(dt_api, testcase_model_cls)
         return testcase
 
-    def run(self):
+    def run(self, timeout=None):
         testcase = self.get_testcase()
+        self.timeout = timeout if timeout is not None else self.timeout
         return testcase.run(self.timeout)

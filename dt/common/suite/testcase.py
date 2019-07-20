@@ -41,6 +41,8 @@ class TestCase(Model):
         # do work
         with concurrent.futures.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
             while True:
+                self.init_model()
+
                 futures = [executor.submit(self.work) for _ in range(JOBS_PER_TICK)]
                 futures += [executor.submit(self.chaos) for _ in range(CHAOSS_PER_TICK)]
                 records = []
@@ -62,7 +64,6 @@ class TestCase(Model):
                 ticks += 1
                 if ticks >= total_ticks:
                     break
-                self.init_model()
                 time.sleep(SECS_PER_TICK)
 
     def get_test_funcs(self):
@@ -87,7 +88,7 @@ class TestCase(Model):
 
     def setUp(self):
         # run chart
-        # TODO: testing
+        # FIXME: testing
         return
         res = self.api.chart.install(self.api.namespace, name=self.api.release_name,
                                      values=self.api.values, wait=True)

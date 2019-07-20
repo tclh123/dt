@@ -6,7 +6,9 @@ from dt.common.mixin.model import Model
 from dt.common.chart import Chart
 from dt.common.process import process
 from dt.common.util import random_string
-from dt.config import RELEASE_NAME_PREFIX, NAMESPACE_PREFIX, RANDOM_SUFFIX_LEN, HISTORY_RECORDS_SAVE_PATH, DEFAULT_CHECKER_BIN
+from dt.config import (RELEASE_NAME_PREFIX, NAMESPACE_PREFIX, RANDOM_SUFFIX_LEN,
+                       HISTORY_RECORDS_SAVE_PATH, DEFAULT_CHECKER_BIN, CLUSTER_DOMAIN)
+
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,7 @@ class DtApi(Model):
         super().__init__(**kw)
         self.release_name = self.gen_release_name(self.chart.name)
         self.namespace = self.gen_release_name(self.chart.name)
+        self.cluster_domain = CLUSTER_DOMAIN
 
     def record(self, records):
         '''save record, comsumed by checker'''
