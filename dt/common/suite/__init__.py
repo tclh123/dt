@@ -21,7 +21,6 @@ class Suite(Model, YamlMixin):
         'testcase_model_cls',   # python class path for the testcase model class
     ]
 
-    # TODO: use dir pattern
     __yaml_dirs__ = SUITE_PATHS
 
     def __init__(self, **kw):
@@ -37,7 +36,11 @@ class Suite(Model, YamlMixin):
         testcase = testcase_cls(dt_api, testcase_model_cls)
         return testcase
 
-    def run(self, timeout=None):
+    def run(self, timeout=None, dry_run=False):
         testcase = self.get_testcase()
         self.timeout = timeout if timeout is not None else self.timeout
-        return testcase.run(self.timeout)
+        return testcase.run(self.timeout, dry_run=dry_run)
+
+    @classmethod
+    def load_yaml(self, filename):
+        return super().load_yaml(filename + '/suite.yaml')

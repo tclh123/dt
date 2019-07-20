@@ -33,17 +33,27 @@ class YamlMixin:
         params = {k: getattr(self, k) for k in self._fields}
         return yaml.safe_dump(params)
 
-    # TODO: support yaml dir pattern for suite loads
     @classmethod
-    def load_yaml(self, filename):
-        assert self.__yaml_dirs__
+    def load_yaml(cls, filename):
+        assert cls.__yaml_dirs__
         filename = filename + '.yaml' if not filename.endswith('.yaml') else filename
-        for path in self.__yaml_dirs__:
+        for path in cls.__yaml_dirs__:
             filepath = os.path.join(path, filename)
-            logger.debug('%s.load_yaml %s', self.__class__.__name__, filepath)
+            logger.debug('%s.load_yaml %s', cls.__class__.__name__, filepath)
             if os.path.exists(filepath):
                 content = open(filepath, 'r', encoding='utf-8').read()
                 # HACK: replace some placehold with config value
                 content = content.replace('__CLUSTER_DOMAIN__', CLUSTER_DOMAIN)
                 return content
         return ''
+
+    @classmethod
+    def load_from_yaml(cls, filename):
+        return cls.from_yaml(cls.load_yaml(filename))
+
+    @classmethod
+    def list_yaml(cls):
+        return [entry[:-len('.yaml')] if entry.endswith('.yaml') else entry
+                for path in cls.__yaml_dirs__
+                for entry in os.listdir(path)
+                if entry != 'README.md' and not entry.startswith('__')]

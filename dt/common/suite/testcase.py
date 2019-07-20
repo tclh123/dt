@@ -20,8 +20,10 @@ class TestCase(Model):
     def __init__(self, dt_api, model_cls):
         self.api = dt_api
         self.model = model_cls(dt_api)
+        self.dry_run = None
 
-    def run(self, timeout=0):
+    def run(self, timeout=0, dry_run=False):
+        self.dry_run = dry_run
         self.setUp()
 
         try:
@@ -87,9 +89,10 @@ class TestCase(Model):
         pass
 
     def setUp(self):
+        # for testing
+        if self.dry_run:
+            return
         # run chart
-        # FIXME: testing
-        return
         res = self.api.chart.install(self.api.namespace, name=self.api.release_name,
                                      values=self.api.values, wait=True)
         logger.info('installed chart: %s', self.api.chart.name)
@@ -98,6 +101,8 @@ class TestCase(Model):
         pass
 
     def tearDown(self):
+        if self.dry_run:
+            return
         # purge chart
         res = self.api.chart.uninstall(self.api.release_name)
         logger.info('uninstalled chart: %s', self.api.chart.name)

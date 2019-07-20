@@ -21,16 +21,21 @@ def run(args):
     # chart = Chart.from_yaml(Chart.load_yaml(chart_name))
     # print(chart)
 
-    suite = Suite.from_yaml(Suite.load_yaml('redis/suite'))
-    print(suite)
-    suite.run(timeout=args.timeout)
+    suite = Suite.load_from_yaml('redis')
+    logger.info(suite)
+    suite.run(timeout=args.timeout, dry_run=args.dry_run)
+
+
+def list_(args):
+    resource_cls = Chart if args.resource == 'chart' else Suite
+    [print(e) for e in resource_cls.list_yaml()]
 
 
 def main(args=None):
     '''
     Examples:
 
-    $ dt run -vvv
+    $ dt run redis -t 10 -d
     '''
     parser = argparse.ArgumentParser(
         epilog=main.__doc__,
@@ -38,11 +43,17 @@ def main(args=None):
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-v', '--verbose', action='count', default=0, help='verbose.')
 
-    subparsers = parser.add_subparsers(help='Sub commands', dest='subparser', required=True)
+    subparsers = parser.add_subparsers(help='Sub commands', dest='subparsers', required=True)
 
     run_parser = subparsers.add_parser('run', help='run a test suite')
+    run_parser.add_argument('suite', help='the suite to run')
     run_parser.add_argument('-t', '--timeout', help='run timeout, default is 0 means infinite', default=0, type=int)
+    run_parser.add_argument('-d', '--dry-run', action='store_true', help='dry run mode, will not start cluster')
     run_parser.set_defaults(func=run)
+
+    list_parser = subparsers.add_parser('list', help='list resource')
+    list_parser.add_argument('resource', choices=['chart', 'suite'], help='resource to list')
+    list_parser.set_defaults(func=list_)
 
     args = parser.parse_args(args)
 
